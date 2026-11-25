@@ -46,3 +46,79 @@ def cosine_similarity(vec1, vec2):
 
 similarity = cosine_similarity(query_result, document_result)
 print("Cosine Similarity:", similarity)
+
+# -----------indexing--------------
+# Load Documents
+loader = WebBaseLoader(
+    web_paths=("https://lilianweng.github.io/posts/2023-06-23-agent/",),
+    bs_kwargs=dict(
+        parse_only=bs4.SoupStrainer(
+            # We are instructing BeautifulSoup to parse elements matching any
+            # of these three HTML classes, along with their nested content.
+            class_=("post-content", "post-title", "post-header")
+        )
+    ),
+)
+blog_docs = loader.load()
+# The extracted text would approximately look like this:
+# LLM Powered Autonomous Agents
+
+# This article explains autonomous AI agents.
+# AI agents use tools, memory, and planning.
+
+# | Component           | Purpose |
+# |---                  |---|
+# | `WebBaseLoader`     | Downloads the webpage and converts its extracted text into LangChain documents. |
+# | `bs4`               | BeautifulSoup library for parsing HTML. |
+# | `SoupStrainer`      | Restricts which parts of the HTML are parsed. |
+# | `parse_only`        | Passes the filtering criteria to BeautifulSoup. |
+# | `class_`            | Filters HTML elements based on their CSS classes. |
+# | `loader.load()`     | Returns a list of LangChain `Document` objects. |
+
+# we need to remove unwated text and html tags from webpages!
+
+# What if the website generates content using JavaScript?
+# There is an important difference between removing JavaScript and executing JavaScript.
+# Some websites built with React, Angular, or Vue may initially return HTML like this:
+# <body>
+#     <div id="root"></div>
+#     <script src="app.js"></script>
+# </body>
+
+# The actual content is generated after JavaScript executes in the browser.
+# BeautifulSoup does not execute JavaScript. Therefore, you might receive an almost empty document.
+# For these websites, you can use Playwright to render the webpage in a headless browser, then pass the rendered HTML to BeautifulSoup for cleaning.
+
+# Tool	            Purpose	Executes                    JavaScript
+# BeautifulSoup	    HTML parsing and filtering	          No
+# WebBaseLoader	    Simple webpage loading	              No
+# Trafilatura	    Automatic main-content extraction	  No
+# Playwright	    Browser automation and rendering	  Yes
+# Selenium	        Browser automation and rendering	  Yes
+
+# Webpage URL
+#      │
+#      ▼
+# Fetch HTML (Requests / Playwright)
+#      │
+#      ▼
+# Parse HTML (BeautifulSoup)
+#      │
+#      ▼
+# Remove irrelevant elements
+#      │
+#      ▼
+# Extract meaningful text
+#      │
+#      ▼
+# Create LangChain Documents
+#      │
+#      ▼
+# Text splitting (Chunking)
+#      │
+#      ▼
+# Gemini Embeddings
+#      │
+#      ▼
+# Vector Database
+
