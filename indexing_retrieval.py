@@ -1,10 +1,13 @@
 import config
 import tiktoken
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.document_loaders import WebBaseLoader
+import bs4
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 # --------- indexing---------
 # for more information about langchain integrations visit:
-https://docs.langchain.com/oss/python/integrations/providers/overview
+# https://docs.langchain.com/oss/python/integrations/providers/overview
 
 # Load Documents
 loader = WebBaseLoader(
@@ -25,7 +28,7 @@ blog_docs = loader.load()
 # The default list is ["\n\n", "\n", " ", ""]. This has the effect of trying to keep all paragraphs (and then sentences, and then words) together as long as possible,
 # as those would generically seem to be the strongest semantically related pieces of text.
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+
 text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
     chunk_size=300, 
     chunk_overlap=50)
@@ -43,8 +46,12 @@ vectorstore = Chroma.from_documents(
     embedding=embd
 )
 
-# or
 # retriever = vectorstore.as_retriever()
+# it uses these default settings:
+# - search_type="similarity"
+# - k=4 (retrieves up to four relevant documents)
+
+# or
 
 retriever = vectorstore.as_retriever(
     search_kwargs={"k": 1} # k nearest neighbors
