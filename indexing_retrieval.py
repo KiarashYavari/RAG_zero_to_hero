@@ -76,6 +76,21 @@ print(docs[0].page_content)
 # document metadata
 print(docs[0].metadata)
 
+# output >>>
+# Component One: Planning#
+# A complicated task usually involves many steps. An agent needs to know what they are and plan ahead.
+# Task Decomposition#
+# Chain of thought (CoT; Wei et al. 2022) has become a standard prompting technique for enhancing model performance on complex tasks.
+# The model is instructed to “think step by step” to utilize more test-time computation to decompose hard tasks into smaller and simpler steps. 
+# CoT transforms big tasks into multiple manageable tasks and shed lights into an interpretation of the model’s thinking process.
+# Tree of Thoughts (Yao et al. 2023) extends CoT by exploring multiple reasoning possibilities at each step. 
+# It first decomposes the problem into multiple thought steps and generates multiple thoughts per step, creating a tree structure. 
+# The search process can be BFS (breadth-first search) or DFS (depth-first search) with each state evaluated by a classifier (via a prompt) or majority vote.
+# Task decomposition can be done (1) by LLM with simple prompting like "Steps for XYZ.\n1.", 
+# "What are the subgoals for achieving XYZ?", (2) by using task-specific instructions; e.g. 
+# "Write a story outline." for writing a novel, or (3) with human inputs.
+# {'source': 'https://lilianweng.github.io/posts/2023-06-23-agent/'}
+
 # what happens behind the scenes?
 # retriever.invoke(question)
 #            │
